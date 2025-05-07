@@ -1,6 +1,12 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function StartupDashboard() {
   const [activeIndex] = useState(0);
@@ -12,6 +18,9 @@ export default function StartupDashboard() {
     "Sales",
     "Creative",
   ];
+
+  // Get screen width to calculate square dimensions
+  const screenWidth = Dimensions.get("window").width - 48; // Accounting for padding
 
   return (
     <View className="flex-1" style={{ backgroundColor: "#111827" }}>
@@ -34,28 +43,36 @@ export default function StartupDashboard() {
           </Text>
 
           {/* Spotlight Profile Card */}
-          <View className="bg-gray-800 rounded-3xl overflow-hidden mb-4">
-            <View className="p-4">
-              <Image
-                source={{ uri: "https://placehold.co/400x200" }}
-                className="w-full h-48 rounded-xl mb-4"
-                resizeMode="cover"
-              />
-              <Text
-                className="text-2xl font-bold mb-1"
-                style={{ color: "#ecac6d" }}
-              >
-                SPOTLIGHT
-              </Text>
-              <Text className="text-sm mb-4" style={{ color: "#ecac6d" }}>
-                SYNC DAILY
-              </Text>
+          <View
+            className="bg-gray-800 rounded-3xl overflow-hidden mb-4"
+            style={{ width: screenWidth, height: screenWidth }}
+          >
+            <View className="flex-1 justify-center items-center p-4">
+              <View className="flex-1 w-full justify-center items-center">
+                <Text
+                  style={{
+                    color: "#e11d48",
+                    fontSize: 52,
+                    fontWeight: "900",
+                    letterSpacing: 2,
+                    textAlign: "center",
+                  }}
+                >
+                  SPOTLIGHT
+                </Text>
 
-              <Image
-                source={{ uri: "https://placehold.co/400x150" }}
-                className="w-full h-28 rounded-xl mb-4"
-                resizeMode="cover"
-              />
+                <Text
+                  style={{
+                    color: "#6366f1",
+                    fontSize: 20,
+                    fontWeight: "800",
+                    textAlign: "center",
+                    marginTop: 12,
+                  }}
+                >
+                  SYNC DAILY
+                </Text>
+              </View>
             </View>
           </View>
 
