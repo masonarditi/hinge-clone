@@ -51,7 +51,7 @@ export default function StartupDashboard() {
               <View className="flex-1 w-full justify-center items-center">
                 <Text
                   style={{
-                    color: "#e11d48",
+                    color: "#ecac6d",
                     fontSize: 52,
                     fontWeight: "900",
                     letterSpacing: 2,
@@ -63,7 +63,7 @@ export default function StartupDashboard() {
 
                 <Text
                   style={{
-                    color: "#6366f1",
+                    color: "#ecac6d",
                     fontSize: 20,
                     fontWeight: "800",
                     textAlign: "center",
