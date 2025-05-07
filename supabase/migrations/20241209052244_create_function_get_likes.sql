@@ -39,7 +39,7 @@ select
     'zodiac_sign', zodiac_signs.name,
     'gender', genders.name,
     'sexuality', sexualities.name,
-    'user_types', ut.name,
+    'user_role', ut.name,
     'ethnicities', (
       select coalesce(array_agg(ethnicities.name), '{}')
       from profile_ethnicities
@@ -78,7 +78,7 @@ select
       left join prompts on prompts.id = profile_answers.prompt_id
       where profile_answers.profile_id = p.id and profile_answers.is_active = true
     )
-    'user_types' (
+    'user_role' (
       select coalesce(jsonb_agg(json_build_object(
         'id', profile_answers.id, 
         'answer_text', profile_answers.answer_text, 

@@ -1,4 +1,4 @@
-// app/(app)/profile/user-types.tsx
+// app/(app)/profile/user-role.tsx
 import { useUserTypes } from "@/api/options";
 import { StackHeaderV4 } from "@/components/stack-header-v4";
 import { supabase } from "@/lib/supabase";
@@ -12,10 +12,10 @@ export default function UserTypeScreen() {
   const { session } = useAuth();
   const { edits, setEdits } = useEdit();
   const { data: options } = useUserTypes();
-  const [selected, setSelected] = useState<string>(edits?.user_types || "User");
+  const [selected, setSelected] = useState<string>(edits?.user_role || "User");
 
   useEffect(() => {
-    if (edits?.user_types) setSelected(edits.user_types);
+    if (edits?.user_role) setSelected(edits.user_role);
   }, [edits]);
 
   const save = async () => {
@@ -23,7 +23,7 @@ export default function UserTypeScreen() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .update({ user_types: selected } as any)
+        .update({ user_role: selected } as any)
         .eq("user_id", session.user.id);
 
       if (error) {
@@ -31,7 +31,7 @@ export default function UserTypeScreen() {
         throw error;
       }
 
-      setEdits({ ...edits!, user_types: selected });
+      setEdits({ ...edits!, user_role: selected });
       router.back();
     } catch (err) {
       console.error("Full error:", err);

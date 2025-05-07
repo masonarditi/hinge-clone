@@ -784,7 +784,7 @@ export type Database = {
           gender?: number;
           ethnicities?: number[];
           pets?: number[];
-          user_types?: string;
+          user_role?: string;
           pronouns?: number[];
           gender_preferences?: number[];
           answers?: Json;

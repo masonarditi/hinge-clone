@@ -4,8 +4,8 @@ export const memberPreferences = [
   {
     title: "I am a",
     getValue: (profile: PrivateProfile) =>
-      profile.user_types === "startup" ? "Startup" : "User",
-    route: "/preferences/user-types",
+      profile.user_role === "startup" ? "Startup" : "User",
+    route: "/preferences/user-role",
   },
   {
     title: "I'm interested in",

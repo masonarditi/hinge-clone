@@ -449,7 +449,7 @@ export type Database = {
           sexuality_id: number | null;
           updated_at: string;
           user_id: string | null;
-          user_types: string;
+          user_role: string;
           zodiac_sign_id: number | null;
         };
         Insert: {
@@ -474,7 +474,7 @@ export type Database = {
           sexuality_id?: number | null;
           updated_at?: string;
           user_id?: string | null;
-          user_types?: string;
+          user_role?: string;
           zodiac_sign_id?: number | null;
         };
         Update: {
@@ -499,7 +499,7 @@ export type Database = {
           sexuality_id?: number | null;
           updated_at?: string;
           user_id?: string | null;
-          user_types?: string;
+          user_role?: string;
           zodiac_sign_id?: number | null;
         };
         Relationships: [
@@ -738,7 +738,7 @@ export type Database = {
           pronouns?: number[];
           gender_preferences?: number[];
           answers?: Json;
-          user_types?: string;
+          user_role?: string;
           photos?: Json;
         };
         Returns: undefined;

@@ -26,7 +26,7 @@ returns table (
     answers jsonb,
     photos jsonb,
     avatar_url text,
-    user_types text
+    user_role text
 )
 language plpgsql
 security definer
@@ -119,7 +119,7 @@ json_build_object('id', genders.id, 'name', genders.name)::jsonb as gender,
   order by profile_photos.photo_order
   limit 1
 ) as avatar_url,
-profiles.user_types
+profiles.user_role
 from profiles
 left join children on children.id = profiles.children_id
 left join family_plans on family_plans.id = profiles.family_plan_id

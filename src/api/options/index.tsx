@@ -163,11 +163,11 @@ export const useZodiacSigns = () => {
 
 export const useUserTypes = () =>
   useQuery({
-    queryKey: ["user_types"],
+    queryKey: ["user_role"],
     queryFn: async (): Promise<{ id: number; name: string }[]> => {
       // cast supabase to any so TS accepts the new table
       const { data, error } = await (supabase as any)
-        .from("user_types")
+        .from("user_role")
         .select("*");
 
       if (error) throw error;
