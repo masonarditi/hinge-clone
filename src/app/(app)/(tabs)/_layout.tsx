@@ -1,22 +1,68 @@
 import { useMyProfile } from "@/api/my-profile";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/store/auth";
 import { cn } from "@/utils/cn";
 import { Ionicons } from "@expo/vector-icons";
 import { useConnection } from "@sendbird/uikit-react-native";
 import { Image } from "expo-image";
-import { Tabs } from "expo-router";
-import { useEffect } from "react";
-import { View } from "react-native";
+import { Tabs, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Pressable, View } from "react-native";
 import colors from "tailwindcss/colors";
 
 export default function Layout() {
   const { data: profile } = useMyProfile();
   const { connect } = useConnection();
+  const { session } = useAuth();
+  const [isStartup, setIsStartup] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (profile) {
       connect(profile.id, { nickname: profile.first_name || undefined });
     }
   }, [profile, connect]);
+
+  useEffect(() => {
+    async function checkUserRole() {
+      console.log("=== CHECKING USER ROLE ===");
+      console.log("Session user ID:", session?.user?.id);
+
+      if (!session?.user?.id) {
+        console.log("No user ID in session, skipping role check");
+        return;
+      }
+
+      try {
+        console.log("Fetching profile from Supabase...");
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .single();
+
+        if (error) {
+          console.log("Error fetching profile:", error);
+          return;
+        }
+
+        console.log("Profile data:", JSON.stringify(data, null, 2));
+        console.log("User role:", (data as any)?.user_role);
+
+        const isUserStartup = (data as any)?.user_role === "startup";
+        console.log("Is startup?", isUserStartup);
+
+        setIsStartup(isUserStartup);
+      } catch (error) {
+        console.error("Error checking user role:", error);
+      }
+    }
+
+    checkUserRole();
+  }, [session]);
+
+  console.log("Current isStartup state:", isStartup);
+  console.log("Rendering tabs, showing startup tab?", isStartup);
 
   return (
     <Tabs
@@ -61,6 +107,23 @@ export default function Layout() {
             <Ionicons name="chatbox-outline" color={color} size={size} />
           ),
           headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="startup"
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="briefcase-outline" color={color} size={size} />
+          ),
+          tabBarButton: (props) =>
+            isStartup ? <Pressable {...props} /> : null,
+          headerShown: false,
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/startup-dashboard");
+          },
         }}
       />
       <Tabs.Screen

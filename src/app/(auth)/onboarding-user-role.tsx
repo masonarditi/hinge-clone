@@ -1,8 +1,8 @@
 "use client";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/auth";
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, Stack } from "expo-router";
+import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 const ROLES = ["user", "startup"];
@@ -155,20 +155,41 @@ export default function OnboardingUserRole() {
   };
 
   return (
-    <View className="flex-1 bg-gray-900 justify-center items-center p-8">
-      <Text className="text-3xl font-bold text-white mb-8">I am a…</Text>
-      {ROLES.map((role) => (
-        <Pressable
-          key={role}
-          onPress={() => handleSelect(role)}
-          className={`w-full py-4 mb-4 rounded-lg items-center ${
-            selected === role ? "bg-fuchsia-700" : "bg-gray-800"
-          }`}
-          disabled={loading}
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View
+        className="flex-1 justify-center items-center p-8"
+        style={{ backgroundColor: "#111827" }}
+      >
+        <Text
+          className="text-4xl font-playfair-semibold mb-8"
+          style={{ color: "#ecac6d" }}
         >
-          <Text className="text-white text-xl capitalize">{role}</Text>
-        </Pressable>
-      ))}
-    </View>
+          I am a…
+        </Text>
+        {ROLES.map((role) => (
+          <Pressable
+            key={role}
+            onPress={() => handleSelect(role)}
+            className={`w-full py-4 mb-4 items-center justify-center rounded-full ${
+              selected === role ? "border-0" : "border border-[#ecac6d]"
+            }`}
+            style={{
+              backgroundColor: selected === role ? "#ecac6d" : "#111827",
+            }}
+            disabled={loading}
+          >
+            <Text
+              className="text-lg font-poppins-semibold"
+              style={{
+                color: selected === role ? "#111827" : "#ecac6d",
+              }}
+            >
+              {role.charAt(0).toUpperCase() + role.slice(1)}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+    </>
   );
 }
