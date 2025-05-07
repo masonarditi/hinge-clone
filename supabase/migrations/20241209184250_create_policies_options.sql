@@ -70,9 +70,11 @@ for select
 to public
 using (true);
 
-create policy "select_user_types_public"
-on "public"."user_types"
-as permissive
-for select
-to public
-using (true);
+-- used to be user_types, now user_role
+
+-- create policy "select_user_role_public"
+-- on "public"."user_role"
+-- as permissive
+-- for select
+-- to public
+-- using (true);
