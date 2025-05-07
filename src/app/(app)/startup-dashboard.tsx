@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   Dimensions,
+  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -47,6 +48,82 @@ export default function StartupDashboard() {
             className="bg-gray-800 rounded-3xl overflow-hidden mb-4"
             style={{ width: screenWidth, height: screenWidth }}
           >
+            {/* Top Image (bottom half visible) */}
+            <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: screenWidth / 4,
+                width: screenWidth / 2,
+                height: screenWidth / 3.5,
+                overflow: "hidden",
+                borderBottomLeftRadius: 20,
+                borderBottomRightRadius: 20,
+              }}
+            >
+              <Image
+                source={{
+                  uri: "https://www.instagram.com/p/Cyns-rouX1i/media?size=l",
+                }}
+                style={{
+                  width: "100%",
+                  height: screenWidth / 1.75,
+                  marginTop: -screenWidth / 3.5,
+                }}
+                resizeMode="cover"
+              />
+            </View>
+
+            {/* Bottom Left Image (top-right corner visible) */}
+            <View
+              style={{
+                position: "absolute",
+                bottom: -10,
+                left: -10,
+                width: screenWidth / 3,
+                height: screenWidth / 3,
+                overflow: "hidden",
+                borderTopRightRadius: 20,
+              }}
+            >
+              <Image
+                source={{
+                  uri: "https://www.instagram.com/p/C5Ef_4ZvU4D/media?size=l",
+                }}
+                style={{
+                  width: screenWidth / 1.5,
+                  height: screenWidth / 1.5,
+                  marginLeft: -screenWidth / 6,
+                  marginTop: -screenWidth / 6,
+                }}
+                resizeMode="cover"
+              />
+            </View>
+
+            {/* Bottom Right Image (left half visible) */}
+            <View
+              style={{
+                position: "absolute",
+                bottom: -10,
+                right: -10,
+                width: screenWidth / 3,
+                height: screenWidth / 3,
+                overflow: "hidden",
+                borderTopLeftRadius: 20,
+              }}
+            >
+              <Image
+                source={{
+                  uri: "https://www.instagram.com/p/Cyns-rouX1i/media?size=l",
+                }}
+                style={{
+                  width: screenWidth / 1.5,
+                  height: screenWidth / 3,
+                }}
+                resizeMode="cover"
+              />
+            </View>
+
             <View className="flex-1 justify-center items-center p-4">
               <View className="flex-1 w-full justify-center items-center">
                 <Text
