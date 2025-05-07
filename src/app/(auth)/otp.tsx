@@ -1,7 +1,7 @@
 import { useVerifyOtp } from "@/api/auth";
 import { Fab } from "@/components/fab";
 import { StackHeader } from "@/components/stack-header";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -22,6 +22,7 @@ export default function Page() {
     error,
     reset,
   } = useVerifyOtp();
+  const router = useRouter();
 
   const handleOtpChange = (text: string) => {
     if (isError) {
@@ -35,7 +36,20 @@ export default function Page() {
   }, [otp]);
 
   const handleSubmit = () => {
-    verifyOtp({ phone, token: otp });
+    console.log("Submitting OTP:", otp, "for phone:", phone);
+    verifyOtp(
+      { phone, token: otp },
+      {
+        onSuccess: () => {
+          console.log("OTP verified, redirecting to onboarding-user-role");
+          router.push("/onboarding-user-role");
+          console.log("router.push called");
+        },
+        onError: (err) => {
+          console.log("OTP verification failed:", err);
+        },
+      }
+    );
   };
 
   return (

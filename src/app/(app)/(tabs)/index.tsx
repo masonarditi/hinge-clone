@@ -12,6 +12,7 @@ import { useRefreshOnFocus } from "@/hooks/refetch";
 import { transformPublicProfile } from "@/utils/profile";
 import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
+// eslint-disable-next-line import/no-unresolved
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";

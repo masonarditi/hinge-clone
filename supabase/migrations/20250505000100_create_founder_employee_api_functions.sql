@@ -307,7 +307,7 @@ BEGIN
     one_line_description = COALESCE(update_profile_info.one_line_description, p.one_line_description),
     user_role = CASE
       WHEN update_profile_info.user_role IS NOT NULL AND 
-           update_profile_info.user_role IN ('founder', 'creative', 'swe')
+           update_profile_info.user_role IN ('startup', 'user')
       THEN update_profile_info.user_role
       ELSE p.user_role
     END,

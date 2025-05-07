@@ -1,11 +1,11 @@
 -- 1. Update profiles table with the new fields
 ALTER TABLE "public"."profiles"
   ADD COLUMN "one_line_description" text,
-  ADD COLUMN "user_role" text NOT NULL DEFAULT 'founder';
+  ADD COLUMN "user_role" text NOT NULL DEFAULT 'startup';
 
 -- Add check constraint separately
 ALTER TABLE "public"."profiles"
-  ADD CONSTRAINT check_user_role CHECK (user_role IN ('founder', 'creative', 'swe'));
+  ADD CONSTRAINT check_user_role CHECK (user_role IN ('startup', 'user'));
 
 -- 2. Create a skills table for programming languages/tools
 CREATE TABLE "public"."skills" (
