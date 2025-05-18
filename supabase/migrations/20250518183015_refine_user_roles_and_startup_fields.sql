@@ -5,10 +5,10 @@ ALTER TABLE "public"."profiles" DROP CONSTRAINT IF EXISTS check_user_role;
 
 -- Update existing user_role values before changing the constraint
 UPDATE "public"."profiles" SET user_role = 'startup' WHERE user_role = 'founder';
-UPDATE "public"."profiles" SET user_role = 'candidate' WHERE user_role IN ('swe', 'creative', 'user', 'employee'); -- Added 'employee' just in case
+UPDATE "public"."profiles" SET user_role = 'candidate' WHERE user_role IN ('swe', 'creative', 'user', 'employee'); -- maybe add startup
 
 -- Add the new check constraint with 'startup' and 'candidate'
-ALTER TABLE "public"."profiles" ADD CONSTRAINT check_user_role CHECK (user_role IN ('startup', 'candidate'));
+ALTER TABLE "public"."profiles" ADD CONSTRAINT check_user_role CHECK (user_role IN ('startup', 'candidate', 'user'));
 
 -- Ensure skills table exists
 CREATE TABLE IF NOT EXISTS "public"."skills" (
