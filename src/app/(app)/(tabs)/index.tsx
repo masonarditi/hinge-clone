@@ -10,12 +10,14 @@ import { Fab } from "@/components/fab";
 import { Loader } from "@/components/loader";
 import { ProfileView } from "@/components/profile-view";
 import { useRefreshOnFocus } from "@/hooks/refetch";
+import { supabase } from "@/lib/supabase";
 import { transformPublicProfile } from "@/utils/profile";
 import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   ScrollView,
@@ -24,6 +26,56 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const RefreshProfilesButton = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      const { error } = await supabase.rpc("reset_profile_interactions");
+
+      if (error) {
+        console.error("Error refreshing profiles:", error);
+        Alert.alert("Error", "Failed to refresh profiles: " + error.message);
+      } else {
+        await queryClient.invalidateQueries({ queryKey: ["profiles"] });
+        console.log("Profiles refreshed successfully");
+      }
+    } catch (e) {
+      console.error("Exception during profile refresh:", e);
+      Alert.alert("Error", "An unexpected error occurred");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={handleRefresh}
+      disabled={isRefreshing}
+      className="bg-gray-800 rounded-full py-3 px-5 flex-row items-center justify-center mt-4"
+      style={{ borderColor: "#ecac6d", borderWidth: 1 }}
+    >
+      {isRefreshing ? (
+        <ActivityIndicator size="small" color="#ecac6d" />
+      ) : (
+        <>
+          <Ionicons
+            name="refresh"
+            size={18}
+            color="#ecac6d"
+            style={{ marginRight: 8 }}
+          />
+          <Text style={{ color: "#ecac6d" }} className="font-poppins-medium">
+            Refresh Profiles
+          </Text>
+        </>
+      )}
+    </TouchableOpacity>
+  );
+};
 
 export default function Page() {
   const { data: myProfile, isLoading: profileLoading } = useMyProfile();
@@ -168,6 +220,7 @@ export default function Page() {
         secondaryText="Review skipped profiles"
         onPrimaryPress={() => router.push("/preferences")}
         onSecondaryPress={handleReview}
+        extraContent={<RefreshProfilesButton />}
       />
     );
   }

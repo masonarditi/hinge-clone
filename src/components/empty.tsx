@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,6 +9,7 @@ interface Props {
   secondaryText?: string;
   onPrimaryPress?: () => void;
   onSecondaryPress?: () => void;
+  extraContent?: ReactNode;
 }
 
 export const Empty: FC<Props> = ({
@@ -18,6 +19,7 @@ export const Empty: FC<Props> = ({
   onSecondaryPress,
   primaryText,
   secondaryText,
+  extraContent,
 }) => {
   return (
     <SafeAreaView className="flex-1 p-5 bg-gray-900 justify-center gap-8">
@@ -57,6 +59,9 @@ export const Empty: FC<Props> = ({
               {secondaryText}
             </Text>
           </Pressable>
+        )}
+        {extraContent && (
+          <View className="items-center mt-4">{extraContent}</View>
         )}
       </View>
     </SafeAreaView>
