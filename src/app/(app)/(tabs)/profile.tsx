@@ -1,4 +1,5 @@
 import { useMyProfile } from "@/api/my-profile";
+import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +20,25 @@ import ProfileCard from "../../../components/profile-card";
 export default function ProfilePage() {
   const { data: profile } = useMyProfile();
   const isStartup = profile?.user_role === "startup";
+
+  // Add sign out handler
+  const handleSignOut = async () => {
+    try {
+      console.log("Signing out user...");
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error("Sign out error:", error);
+        Alert.alert("Error", "Failed to sign out: " + error.message);
+      } else {
+        console.log("Sign out successful");
+        router.replace("/(auth)/sign-in");
+      }
+    } catch (e) {
+      console.error("Exception during sign out:", e);
+      Alert.alert("Error", "An unexpected error occurred");
+    }
+  };
 
   // Common routes that exist in the app already
   const commonRoutes = {
@@ -237,6 +257,21 @@ export default function ProfilePage() {
                 onPress={() => handleNavigation(option.route)}
               />
             ))}
+
+            {/* Sign Out Button */}
+            <ProfileCard
+              key="sign-out"
+              icon={
+                <Ionicons
+                  name="log-out-outline"
+                  className="text-2xl"
+                  style={{ color: "#e74c3c" }}
+                />
+              }
+              title="Sign Out"
+              subtitle="Log out of your account"
+              onPress={handleSignOut}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
