@@ -1,2 +1,2 @@
 alter table profiles
-  add column user_role text not null default 'user';
+  add column IF NOT EXISTS user_role text not null default 'user';
