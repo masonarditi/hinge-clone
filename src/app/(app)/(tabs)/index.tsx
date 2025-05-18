@@ -97,11 +97,29 @@ export default function Page() {
   useEffect(() => {
     if (!allProfiles || !myProfile) return;
 
-    const oppositeRoleProfiles = allProfiles.filter((profile) =>
-      isStartup
-        ? profile.user_role === "candidate"
-        : profile.user_role === "startup"
-    );
+    // Log what we're working with for debugging
+    console.log("My user role:", myProfile.user_role);
+    console.log("All profiles count:", allProfiles.length);
+    console.log("Available user roles:", [
+      ...new Set(allProfiles.map((p) => p.user_role)),
+    ]);
+
+    const oppositeRoleProfiles = allProfiles.filter((profile) => {
+      // Enhanced filtering logic to handle all cases
+      if (myProfile.user_role === "startup") {
+        return (
+          profile.user_role === "candidate" || profile.user_role === "candidate"
+        );
+      } else if (
+        myProfile.user_role === "candidate" ||
+        myProfile.user_role === "user"
+      ) {
+        return profile.user_role === "startup";
+      }
+      return profile.user_role !== myProfile.user_role;
+    });
+
+    console.log("Filtered profiles count:", oppositeRoleProfiles.length);
 
     setFilteredProfiles(oppositeRoleProfiles);
     setCurrentIndex(0);
