@@ -475,6 +475,12 @@ export type Database = {
           updated_at: string;
           user_id: string | null;
           zodiac_sign_id: number | null;
+          user_role: string;
+          funding_stage: string | null;
+          looking_for_roles: string[] | null;
+          offer_details: unknown | null;
+          why_us_platform: string | null;
+          skills: string[] | null;
         };
         Insert: {
           children_id?: number | null;
@@ -499,6 +505,12 @@ export type Database = {
           updated_at?: string;
           user_id?: string | null;
           zodiac_sign_id?: number | null;
+          user_role?: string;
+          funding_stage?: string | null;
+          looking_for_roles?: string[] | null;
+          offer_details?: unknown | null;
+          why_us_platform?: string | null;
+          skills?: string[] | null;
         };
         Update: {
           children_id?: number | null;
@@ -523,6 +535,12 @@ export type Database = {
           updated_at?: string;
           user_id?: string | null;
           zodiac_sign_id?: number | null;
+          user_role?: string;
+          funding_stage?: string | null;
+          looking_for_roles?: string[] | null;
+          offer_details?: unknown | null;
+          why_us_platform?: string | null;
+          skills?: string[] | null;
         };
         Relationships: [
           {

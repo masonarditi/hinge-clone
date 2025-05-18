@@ -1,28 +1,32 @@
-export interface Like {
-  id: string;
-  photo_url: string | null;
-  answer_text: string | null;
-  question: string | null;
-  profile: PublicProfile;
+import { Profile } from "@/types/profile";
+
+export interface PublicProfile extends Profile {
+  distance_km: number;
+  age: number | null;
 }
 
-export interface PublicProfile {
+export interface Like {
   id: string;
-  age: number;
-  pets: string[];
-  gender: string;
-  photos: Photo[];
-  answers: Answer[];
-  children: string;
-  pronouns: string[];
-  height_cm: number;
-  sexuality: string;
+  created_at: string;
+  status_id: number;
+  actor_id: string;
+  target_id: string;
+  compatibility_score: number;
   first_name: string;
-  ethnicities: string[];
-  family_plan: string;
-  zodiac_sign: string;
-  neighborhood: string;
-  covid_vaccine: string;
+  photo_url: string | null;
+  user_role: "startup" | "candidate";
+  one_line_description: string | null;
+}
+
+export interface Match {
+  id: string;
+  created_at: string;
+  actor_id: string;
+  target_id: string;
+  first_name: string;
+  photo_url: string | null;
+  user_role: "startup" | "candidate";
+  one_line_description: string | null;
 }
 
 export interface Answer {

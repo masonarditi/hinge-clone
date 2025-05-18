@@ -1,7 +1,7 @@
 import { cn } from "@/utils/cn";
 import { Ionicons } from "@expo/vector-icons";
 import React, { FC } from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 
 interface Props {
   disabled?: boolean;
@@ -22,8 +22,15 @@ export const Fab: FC<Props> = ({
   iconClassName,
   loaderClassName,
 }) => {
+  const handlePress = () => {
+    console.log("Fab button pressed", { iconName, disabled });
+    if (onPress) {
+      onPress();
+    }
+  };
+
   return (
-    <Pressable
+    <TouchableOpacity
       className={cn(
         "h-16 aspect-square rounded-full justify-center items-center bg-fuchsia-900",
         {
@@ -32,8 +39,10 @@ export const Fab: FC<Props> = ({
         },
         className
       )}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
+      activeOpacity={0.7}
+      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
       {loading ? (
         <ActivityIndicator className={cn(" text-white", loaderClassName)} />
@@ -55,6 +64,6 @@ export const Fab: FC<Props> = ({
           />
         </View>
       )}
-    </Pressable>
+    </TouchableOpacity>
   );
 };

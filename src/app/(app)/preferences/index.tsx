@@ -17,9 +17,9 @@ export default function Page() {
 
   return (
     <View className="flex-1 bg-gray-900 p-5">
-      <StackHeaderV2 title="Matchmaking Filters" />
+      <StackHeaderV2 title="Matching Preferences" />
       <List
-        title="Matchmatking Filters"
+        title="Matching Preferences"
         data={memberPreferences}
         profile={edits}
       />

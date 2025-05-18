@@ -1,16 +1,22 @@
 import { useVerifyOtp } from "@/api/auth";
-import { Fab } from "@/components/fab";
 import { StackHeader } from "@/components/stack-header";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StatusBar,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
+
+// Set to true to enable debug/test mode with bypass
+const ENABLE_DEBUG_MODE = true;
 
 export default function Page() {
   const [otp, setOtp] = useState("");
@@ -37,19 +43,39 @@ export default function Page() {
 
   const handleSubmit = () => {
     console.log("Submitting OTP:", otp, "for phone:", phone);
-    verifyOtp(
-      { phone, token: otp },
-      {
-        onSuccess: () => {
-          console.log("OTP verified, redirecting to onboarding-user-role");
-          router.push("/onboarding-user-role");
-          console.log("router.push called");
-        },
-        onError: (err) => {
-          console.log("OTP verification failed:", err);
-        },
-      }
-    );
+    try {
+      verifyOtp(
+        { phone, token: otp },
+        {
+          onSuccess: () => {
+            console.log("OTP verified, redirecting to onboarding-user-role");
+            try {
+              router.push("/onboarding-user-role");
+              console.log("router.push called");
+            } catch (e) {
+              console.error("Navigation error:", e);
+              Alert.alert(
+                "Navigation Error",
+                "Could not navigate to the next screen. Please try again."
+              );
+            }
+          },
+          onError: (err) => {
+            console.log("OTP verification failed:", err);
+            Alert.alert("Verification Error", err.message);
+          },
+        }
+      );
+    } catch (e) {
+      console.error("Exception in handleSubmit:", e);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    }
+  };
+
+  // Debug function to bypass OTP verification
+  const handleDebugSkip = () => {
+    console.log("DEBUG MODE: Bypassing OTP verification");
+    router.push("/onboarding-user-role");
   };
 
   return (
@@ -109,14 +135,43 @@ export default function Page() {
             </Text>
           )}
         </View>
-        <View className="items-end">
-          <Fab
-            disabled={!isValid || isPending}
+
+        <View className="flex-row justify-between">
+          {ENABLE_DEBUG_MODE && (
+            <TouchableOpacity
+              onPress={handleDebugSkip}
+              activeOpacity={0.7}
+              style={{
+                backgroundColor: "#444",
+                paddingHorizontal: 15,
+                paddingVertical: 8,
+                borderRadius: 8,
+              }}
+            >
+              <Text style={{ color: "#ecac6d" }}>Debug Skip</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity
             onPress={handleSubmit}
-            loading={isPending}
-            iconClassName="text-white text-4xl"
-            className="bg-[#ecac6d]"
-          />
+            disabled={!isValid || isPending}
+            activeOpacity={0.7}
+            style={{
+              backgroundColor: isValid && !isPending ? "#ecac6d" : "#777777",
+              width: 80,
+              height: 80,
+              borderRadius: 40,
+              justifyContent: "center",
+              alignItems: "center",
+              alignSelf: "flex-end",
+            }}
+          >
+            {isPending ? (
+              <ActivityIndicator color="#FFFFFF" size="large" />
+            ) : (
+              <Ionicons name="chevron-forward" size={40} color="#FFFFFF" />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     </KeyboardAvoidingView>

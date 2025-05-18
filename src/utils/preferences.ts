@@ -4,49 +4,52 @@ export const memberPreferences = [
   {
     title: "I am a",
     getValue: (profile: PrivateProfile) =>
-      profile.user_role === "startup" ? "Startup" : "User",
+      profile.user_role === "startup" ? "Startup" : "Candidate",
     route: "/preferences/user-role",
   },
   {
-    title: "I'm interested in",
+    title: "Looking for",
     getValue: (profile: PrivateProfile) => {
-      return (
-        profile?.gender_preferences.map((gender) => gender.name).join(", ") ||
-        "Everyone"
-      );
+      if (profile.user_role === "startup") {
+        return profile?.looking_for_roles?.join(", ") || "Any roles";
+      } else {
+        return "Startup opportunities";
+      }
     },
-    route: "/preferences/gender",
+    route: "/preferences/roles",
   },
   {
-    title: "My neighborhood",
+    title: "Skills",
     getValue: (profile: PrivateProfile) => {
-      return profile?.neighborhood || "None";
+      if (profile.user_role === "candidate") {
+        return profile?.skills?.join(", ") || "None specified";
+      }
+      return "N/A";
     },
-    route: "/preferences/neighborhood",
+    route: "/preferences/skills",
+  },
+  {
+    title: "Location",
+    getValue: (profile: PrivateProfile) => {
+      return profile?.neighborhood || "Remote";
+    },
+    route: "/preferences/location",
   },
   {
     title: "Maximum distance",
     getValue: (profile: PrivateProfile) => {
-      return `${profile?.max_distance_km} km`;
+      return `${profile?.max_distance_km || 160} km`;
     },
     route: "/preferences/distance",
   },
   {
-    title: "Age range",
+    title: "Funding stage",
     getValue: (profile: PrivateProfile) => {
-      return `${profile?.min_age} - ${profile?.max_age}`;
+      if (profile.user_role === "startup") {
+        return profile?.funding_stage || "Not specified";
+      }
+      return "Any";
     },
-    route: "/preferences/age",
-  },
-  {
-    title: "Ethnicity",
-    getValue: (profile: PrivateProfile) => {
-      return (
-        profile?.ethnicity_preferences
-          .map((ethnicity) => ethnicity.name)
-          .join(", ") || "Open to all"
-      );
-    },
-    route: "/preferences/ethnicity",
+    route: "/preferences/funding",
   },
 ];

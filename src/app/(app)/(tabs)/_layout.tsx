@@ -1,155 +1,95 @@
 import { useMyProfile } from "@/api/my-profile";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/store/auth";
-import { cn } from "@/utils/cn";
+import { useRefreshOnFocus } from "@/hooks/refetch";
 import { Ionicons } from "@expo/vector-icons";
-import { useConnection } from "@sendbird/uikit-react-native";
-import { Image } from "expo-image";
-import { Tabs, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Pressable, View } from "react-native";
-import colors from "tailwindcss/colors";
+import { Tabs } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 
 export default function Layout() {
-  const { data: profile } = useMyProfile();
-  const { connect } = useConnection();
-  const { session } = useAuth();
-  const [isStartup, setIsStartup] = useState(false);
-  const router = useRouter();
+  const { data: user, refetch } = useMyProfile();
+  useRefreshOnFocus(refetch);
 
+  // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Proper navigation based on user role
   useEffect(() => {
-    if (profile) {
-      connect(profile.id, { nickname: profile.first_name || undefined });
+    if (!user) {
+      return; // Wait for user data to load
     }
-  }, [profile, connect]);
+    setIsLoading(false);
+  }, [user]);
 
-  useEffect(() => {
-    async function checkUserRole() {
-      console.log("=== CHECKING USER ROLE ===");
-      console.log("Session user ID:", session?.user?.id);
+  // If user is not available, render a placeholder while loading
+  if (!user || isLoading) {
+    return <View style={{ flex: 1, backgroundColor: "#1f2937" }} />; // Loading placeholder
+  }
 
-      if (!session?.user?.id) {
-        console.log("No user ID in session, skipping role check");
-        return;
-      }
-
-      try {
-        console.log("Fetching profile from Supabase...");
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .single();
-
-        if (error) {
-          console.log("Error fetching profile:", error);
-          return;
-        }
-
-        console.log("Profile data:", JSON.stringify(data, null, 2));
-        console.log("User role:", (data as any)?.user_role);
-
-        const isUserStartup = (data as any)?.user_role === "startup";
-        console.log("Is startup?", isUserStartup);
-
-        setIsStartup(isUserStartup);
-      } catch (error) {
-        console.error("Error checking user role:", error);
-      }
-    }
-
-    checkUserRole();
-  }, [session]);
-
-  console.log("Current isStartup state:", isStartup);
-  console.log("Rendering tabs, showing startup tab?", isStartup);
+  const isStartup = user?.user_role === "startup";
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor: colors.neutral[950],
-        },
-        tabBarActiveTintColor: "#ecac6d",
-        tabBarInactiveTintColor: colors.neutral[500],
-        tabBarShowLabel: false,
-        headerStyle: {
-          backgroundColor: colors.gray[900],
-        },
-        headerTitleStyle: {
-          color: colors.white,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" color={color} size={size} />
-          ),
-          headerTitle: "",
-          headerShadowVisible: false,
-        }}
-      />
-      <Tabs.Screen
-        name="likes"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart-outline" color={color} size={size} />
-          ),
+    <>
+      <StatusBar style="light" backgroundColor="#1f2937" />
+      <Tabs
+        screenOptions={{
           headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-        name="matches"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbox-outline" color={color} size={size} />
-          ),
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-        name="startup"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="briefcase-outline" color={color} size={size} />
-          ),
-          tabBarButton: (props) =>
-            isStartup ? <Pressable {...props} /> : null,
-          headerShown: false,
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/startup-dashboard");
+          tabBarStyle: {
+            backgroundColor: "#1f2937",
+            borderTopColor: "#374151",
+            height: 60,
+          },
+          tabBarActiveTintColor: "#ecac6d",
+          tabBarInactiveTintColor: "white",
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontFamily: "poppins-regular",
+            marginBottom: 5,
           },
         }}
-      />
-      <Tabs.Screen
-        name="hinge"
-        options={{
-          tabBarIcon: ({ color, size, focused }) =>
-            profile && profile.avatar_url ? (
-              <View
-                style={{
-                  width: size,
-                  height: size,
-                }}
-                className={cn(
-                  focused && "border border-white rounded-full p-0.5"
-                )}
-              >
-                <Image
-                  source={profile.avatar_url}
-                  className="flex-1 aspect-square rounded-full bg-neutral-200"
-                />
-              </View>
-            ) : (
-              <Ionicons name="person-circle" color={color} size={size} />
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Discover",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="search" size={size} color={color} />
             ),
-        }}
-      />
-    </Tabs>
+          }}
+        />
+        <Tabs.Screen
+          name="likes"
+          options={{
+            title: "Saved",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="bookmark" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="matches"
+          options={{
+            title: "Connections",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="chatbubbles" size={size} color={color} />
+            ),
+          }}
+        />
+        {/* Show only one profile tab option based on user role */}
+        <Tabs.Screen
+          name={isStartup ? "startup" : "profile"}
+          options={{
+            title: isStartup ? "Dashboard" : "Profile",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons
+                name={isStartup ? "business" : "person"}
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
