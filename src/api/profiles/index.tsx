@@ -6,24 +6,96 @@ export const useProfiles = (page_size: number = 10) => {
   return useQuery<PublicProfile[]>({
     queryKey: ["profiles", page_size],
     queryFn: async () => {
-      console.log("[useProfiles] Fetching profiles with page_size:", page_size);
-      const { data, error } = await supabase
-        .rpc("get_profiles", {
-          page_size,
-        })
-        .returns<PublicProfile[]>();
+      console.log("=============================================");
+      console.log("[useProfiles] START: Fetching profiles");
+      console.log("[useProfiles] Parameters:", { page_size });
 
-      if (error) {
-        console.error("[useProfiles] Error fetching profiles:", error);
-        throw error;
+      try {
+        console.log("[useProfiles] Making RPC call to get_profiles...");
+
+        // Get raw response to examine before type casting
+        const rawResponse = await supabase.rpc("get_profiles", { page_size });
+        console.log("[useProfiles] Raw response status:", rawResponse.status);
+        console.log(
+          "[useProfiles] Raw error:",
+          JSON.stringify(rawResponse.error)
+        );
+
+        if (rawResponse.error) {
+          // Detailed error logging
+          console.error("[useProfiles] ERROR DETAILS:", {
+            code: rawResponse.error.code,
+            message: rawResponse.error.message,
+            details: rawResponse.error.details,
+            hint: rawResponse.error.hint,
+          });
+
+          // Log column types if available
+          if (
+            rawResponse.error.message.includes("does not match expected type")
+          ) {
+            console.error(
+              "[useProfiles] TYPE MISMATCH DETECTED in column data"
+            );
+          }
+
+          throw rawResponse.error;
+        }
+
+        // Debug the structure of the first item if available
+        if (rawResponse.data && rawResponse.data.length > 0) {
+          console.log(
+            "[useProfiles] First item keys:",
+            Object.keys(rawResponse.data[0])
+          );
+
+          // Check if looking_for_roles exists and log its type
+          if ("looking_for_roles" in rawResponse.data[0]) {
+            console.log(
+              "[useProfiles] looking_for_roles type:",
+              typeof rawResponse.data[0].looking_for_roles,
+              "Is array?",
+              Array.isArray(rawResponse.data[0].looking_for_roles),
+              "Value:",
+              rawResponse.data[0].looking_for_roles
+            );
+          }
+        }
+
+        // Now make the typed call
+        const { data, error } = await supabase
+          .rpc("get_profiles", { page_size })
+          .returns<PublicProfile[]>();
+
+        if (error) {
+          console.error("[useProfiles] Error with typed query:", error);
+          throw error;
+        }
+
+        console.log(
+          "[useProfiles] SUCCESS: Received profiles data:",
+          data?.length || 0,
+          "items"
+        );
+
+        // Log sample structure of returned data
+        if (data && data.length > 0) {
+          console.log("[useProfiles] Sample profile structure:", {
+            id: data[0].id,
+            user_role: data[0].user_role,
+            // Log other important fields
+            looking_for_roles_type: typeof data[0].looking_for_roles,
+          });
+        }
+
+        console.log("[useProfiles] END: Profiles fetch completed");
+        console.log("=============================================");
+        return data;
+      } catch (e) {
+        console.error("[useProfiles] EXCEPTION during fetch:", e);
+        console.log("=============================================");
+        throw e;
       }
-
-      console.log(
-        "[useProfiles] Received profiles data:",
-        data?.length || 0,
-        "items"
-      );
-      return data;
     },
     initialData: [],
   });
