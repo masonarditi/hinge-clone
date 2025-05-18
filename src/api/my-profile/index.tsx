@@ -7,19 +7,27 @@ export const useMyProfile = () => {
   return useQuery<PrivateProfile | null>({
     queryKey: ["myProfile"],
     queryFn: async () => {
-      console.log("Fetching profile from Supabase...");
-      let { data, error } = await supabase
-        .rpc("get_profile")
-        .returns<PrivateProfile>()
-        .single();
+      try {
+        let { data, error } = await supabase
+          .rpc("get_profile")
+          .returns<PrivateProfile>()
+          .single();
 
-      if (error) {
-        console.error("Profile fetch error:", error);
+        if (error) {
+          console.error("Profile fetch error:", error);
+          // If profile not found, sign out user
+          if (error.message.includes("profile not found")) {
+            console.log("Profile not found for user, signing out...");
+            await supabase.auth.signOut();
+          }
+          throw error;
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Profile fetch failed:", error);
         throw error;
       }
-
-      console.log("Profile data received:", data ? "Success" : "Empty");
-      return data;
     },
     initialData: null,
   });
