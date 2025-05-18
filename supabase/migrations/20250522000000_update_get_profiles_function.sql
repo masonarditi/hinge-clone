@@ -25,7 +25,10 @@ returns table (
   photos jsonb, 
   user_role text,                -- Keep as text since it's a single value
   answers jsonb,
-  looking_for_roles text[]       -- Add this column as text[] if needed
+  looking_for_roles text[],       -- Add this column as text[] if needed
+  funding_stage text,        -- Add funding_stage
+  offer_details jsonb,       -- Add offer_details
+  why_us_platform text       -- Add why_us_platform
 )
 language plpgsql
 security definer
@@ -109,7 +112,10 @@ select
     left join prompts on prompts.id = profile_answers.prompt_id
     where profile_answers.profile_id = p.id and profile_answers.is_active = true
   ) as answers,
-  p.looking_for_roles  -- Add looking_for_roles (already text[] in the DB)
+  p.looking_for_roles,
+  p.funding_stage,                 -- Include funding_stage
+  p.offer_details,                 -- Include offer_details
+  p.why_us_platform                -- Include why_us_platform
 from filtered_profiles p
 left join children on children.id = p.children_id
 left join family_plans on family_plans.id = p.family_plan_id

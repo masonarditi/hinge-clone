@@ -43,27 +43,7 @@ export const ProfileView: FC<Props> = ({ profile, myProfile, onLike }) => {
       );
     }
 
-    // Company description
-    if (profile.one_line_description) {
-      elements.push(
-        <View key="description" className="bg-gray-800 p-5 rounded-xl mb-4">
-          <View className="flex-row items-center mb-2">
-            <Ionicons name="business-outline" size={20} color="#ecac6d" />
-            <Text
-              className="text-lg font-poppins-medium ml-2"
-              style={{ color: "#ecac6d" }}
-            >
-              About the Company
-            </Text>
-          </View>
-          <Text className="text-white font-poppins text-base">
-            {profile.one_line_description}
-          </Text>
-        </View>
-      );
-    }
-
-    // Funding stage with visual indicator
+    // Funding stage moved higher up - immediately after photos for more visibility
     if (profile.funding_stage) {
       elements.push(
         <View key="funding" className="bg-gray-800 p-5 rounded-xl mb-4">
@@ -81,6 +61,26 @@ export const ProfileView: FC<Props> = ({ profile, myProfile, onLike }) => {
               {profile.funding_stage}
             </Text>
           </View>
+        </View>
+      );
+    }
+
+    // Company description
+    if (profile.one_line_description) {
+      elements.push(
+        <View key="description" className="bg-gray-800 p-5 rounded-xl mb-4">
+          <View className="flex-row items-center mb-2">
+            <Ionicons name="business-outline" size={20} color="#ecac6d" />
+            <Text
+              className="text-lg font-poppins-medium ml-2"
+              style={{ color: "#ecac6d" }}
+            >
+              About the Company
+            </Text>
+          </View>
+          <Text className="text-white font-poppins text-base">
+            {profile.one_line_description}
+          </Text>
         </View>
       );
     }

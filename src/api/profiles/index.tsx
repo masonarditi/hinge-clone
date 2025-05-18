@@ -60,6 +60,32 @@ export const useProfiles = (page_size: number = 10) => {
               rawResponse.data[0].looking_for_roles
             );
           }
+
+          // Check if funding_stage exists and log its value
+          if ("funding_stage" in rawResponse.data[0]) {
+            console.log(
+              "[useProfiles] funding_stage:",
+              rawResponse.data[0].funding_stage,
+              "Type:",
+              typeof rawResponse.data[0].funding_stage
+            );
+          } else {
+            console.log("[useProfiles] funding_stage not found in data");
+          }
+
+          // Check offer_details and why_us_platform
+          console.log(
+            "[useProfiles] offer_details:",
+            "offer_details" in rawResponse.data[0]
+              ? rawResponse.data[0].offer_details
+              : "not found"
+          );
+          console.log(
+            "[useProfiles] why_us_platform:",
+            "why_us_platform" in rawResponse.data[0]
+              ? rawResponse.data[0].why_us_platform
+              : "not found"
+          );
         }
 
         // Now make the typed call
@@ -83,7 +109,9 @@ export const useProfiles = (page_size: number = 10) => {
           console.log("[useProfiles] Sample profile structure:", {
             id: data[0].id,
             user_role: data[0].user_role,
-            // Log other important fields
+            funding_stage: data[0].funding_stage,
+            offer_details: data[0].offer_details,
+            why_us_platform: data[0].why_us_platform,
             looking_for_roles_type: typeof data[0].looking_for_roles,
           });
         }
