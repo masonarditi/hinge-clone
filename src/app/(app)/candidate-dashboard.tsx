@@ -1,14 +1,17 @@
+import { useMyProfile } from "@/api/my-profile";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-export default function StartupDashboard() {
-  const roles = [
-    "Full Stack",
-    "Frontend",
-    "Backend",
+export default function CandidateDashboard() {
+  const { data: profile } = useMyProfile();
+
+  const skills = [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Python",
     "UI/UX",
-    "Mobile",
     "DevOps",
   ];
 
@@ -29,7 +32,7 @@ export default function StartupDashboard() {
             className="text-3xl font-playfair-semibold mb-6"
             style={{ color: "#ecac6d" }}
           >
-            STARTUP DASHBOARD
+            CANDIDATE DASHBOARD
           </Text>
 
           {/* Analytics Card */}
@@ -38,37 +41,37 @@ export default function StartupDashboard() {
               className="text-xl font-poppins-medium mb-3"
               style={{ color: "#ecac6d" }}
             >
-              Candidate Analytics
+              Your Analytics
             </Text>
 
             <View className="flex-row justify-between mb-3">
               <View className="items-center">
                 <Text className="text-white text-2xl font-poppins-medium">
-                  24
+                  18
                 </Text>
                 <Text className="text-gray-400 text-xs">Profile Views</Text>
               </View>
               <View className="items-center">
                 <Text className="text-white text-2xl font-poppins-medium">
-                  8
+                  5
                 </Text>
                 <Text className="text-gray-400 text-xs">Matches</Text>
               </View>
               <View className="items-center">
                 <Text className="text-white text-2xl font-poppins-medium">
-                  12
+                  7
                 </Text>
                 <Text className="text-gray-400 text-xs">Saved</Text>
               </View>
             </View>
           </View>
 
-          {/* Recent Candidates */}
+          {/* Startups Interested In You */}
           <Text
             className="text-xl font-poppins-medium mb-3"
             style={{ color: "#ecac6d" }}
           >
-            Recent Candidates
+            Startups Interested In You
           </Text>
 
           <View className="mb-6">
@@ -80,10 +83,14 @@ export default function StartupDashboard() {
                 <View className="bg-gray-700 h-12 w-12 rounded-full mr-3" />
                 <View className="flex-1">
                   <Text className="text-white font-poppins-medium">
-                    Candidate {item}
+                    Startup {item}
                   </Text>
                   <Text className="text-gray-400 text-xs">
-                    Full Stack Developer
+                    {item === 1
+                      ? "Seed Stage"
+                      : item === 2
+                        ? "Series A"
+                        : "Series B"}
                   </Text>
                 </View>
                 <TouchableOpacity className="bg-gray-700 p-2 rounded-full">
@@ -97,17 +104,17 @@ export default function StartupDashboard() {
             ))}
           </View>
 
-          {/* Roles Section */}
+          {/* Skills Section */}
           <Text
             className="text-xl font-poppins-medium mb-3"
             style={{ color: "#ecac6d" }}
           >
-            OPEN ROLES
+            YOUR SKILLS
           </Text>
 
-          {/* Role Buttons Grid */}
+          {/* Skills Grid */}
           <View className="flex-row flex-wrap justify-between mb-4">
-            {roles.map((role, index) => (
+            {(profile?.skills || skills).map((skill, index) => (
               <TouchableOpacity
                 key={index}
                 className="w-[48%] rounded-xl p-3 mb-4"
@@ -118,19 +125,55 @@ export default function StartupDashboard() {
                 }}
               >
                 <Text className="text-center" style={{ color: "#ecac6d" }}>
-                  {role}
+                  {skill}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Add New Role Button */}
+          {/* Recommended Startups */}
+          <Text
+            className="text-xl font-poppins-medium mb-3"
+            style={{ color: "#ecac6d" }}
+          >
+            RECOMMENDED STARTUPS
+          </Text>
+
+          <View className="mb-6">
+            {[1, 2, 3].map((item) => (
+              <View
+                key={item}
+                className="bg-gray-800 rounded-lg mb-3 p-3 flex-row items-center"
+              >
+                <View className="bg-gray-700 h-12 w-12 rounded-full mr-3" />
+                <View className="flex-1">
+                  <Text className="text-white font-poppins-medium">
+                    Tech Startup {item}
+                  </Text>
+                  <Text className="text-gray-400 text-xs">
+                    Looking for:{" "}
+                    {item === 1
+                      ? "Frontend Developer"
+                      : item === 2
+                        ? "Full Stack Developer"
+                        : "DevOps Engineer"}
+                  </Text>
+                </View>
+                <TouchableOpacity className="bg-gray-700 p-2 rounded-full">
+                  <Ionicons name="star-outline" size={16} color="#ecac6d" />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+
+          {/* Edit Profile Button */}
           <TouchableOpacity
             className="rounded-xl p-3 mb-6"
             style={{ backgroundColor: "#ecac6d" }}
+            onPress={() => router.push("/profile")}
           >
             <Text className="text-gray-900 text-center font-bold">
-              + Add New Role
+              Edit Your Profile
             </Text>
           </TouchableOpacity>
         </View>
@@ -141,20 +184,17 @@ export default function StartupDashboard() {
         className="h-16 flex-row justify-around items-center rounded-t-xl"
         style={{ backgroundColor: "#1f2937" }}
       >
-        <TouchableOpacity>
-          <Text style={{ color: "#ecac6d", fontSize: 22 }}>★</Text>
+        <TouchableOpacity onPress={() => router.push("/")}>
+          <Ionicons name="search" size={22} color="#ecac6d" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={{ color: "#ecac6d", fontSize: 22 }}>🔍</Text>
+        <TouchableOpacity onPress={() => router.push("/likes")}>
+          <Ionicons name="bookmark" size={22} color="#ecac6d" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={{ color: "#ecac6d", fontSize: 22 }}>✦</Text>
+        <TouchableOpacity onPress={() => router.push("/matches")}>
+          <Ionicons name="chatbubbles" size={22} color="#ecac6d" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={{ color: "#ecac6d", fontSize: 22 }}>💬</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={{ color: "#ecac6d", fontSize: 22 }}>👤</Text>
+        <TouchableOpacity onPress={() => router.push("/profile")}>
+          <Ionicons name="person" size={22} color="#ecac6d" />
         </TouchableOpacity>
       </View>
     </View>

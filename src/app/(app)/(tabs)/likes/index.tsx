@@ -1,103 +1,225 @@
+import { useMyProfile } from "@/api/my-profile";
 import { useLikes } from "@/api/profiles";
 import { Empty } from "@/components/empty";
-import { LikeCard } from "@/components/like-card";
 import { Loader } from "@/components/loader";
 import { useRefreshOnFocus } from "@/hooks/refetch";
-import { Image } from "expo-image";
-import { Link } from "expo-router";
-import React from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-export default function Page() {
+export default function SavedPage() {
+  const { data: myProfile } = useMyProfile();
   const { data, isFetching, isError, refetch } = useLikes();
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   useRefreshOnFocus(refetch);
 
-  const renderHeader = () => {
+  const isStartup = myProfile?.user_role === "startup";
+  const savedLabel = isStartup ? "Saved Candidates" : "Saved Startups";
+
+  if (isFetching) {
+    return <Loader />;
+  }
+
+  if (isError) {
     return (
-      <View className="gap-5 bg-gray-900 ">
-        <Text
-          className="text-3xl font-poppins-semibold"
-          style={{ color: "#ecac6d" }}
-        >
-          Standouts
-        </Text>
-        {data.length > 0 && (
-          <>
-            <Link href={`/likes/${data[0].id}`} asChild>
-              <Pressable className="bg-gray-900 flex-1 rounded-lg overflow-hidden border border-neutral-700">
-                <View className="p-4 gap-5">
-                  <Text className="text-white font-poppins-light">{`Liked your ${
-                    data[0].photo_url ? "photo" : "answer"
-                  }`}</Text>
-                  <Text className="text-xl font-poppins-medium">
-                    {data[0].profile.first_name}
-                  </Text>
-                </View>
-                <View className="p-4">
-                  <View className="rounded-lg flex-1 bg-neutral-200 aspect-square w-full overflow-hidden">
-                    <Image
-                      source={data[0].profile.photos[0].photo_url}
-                      className="flex-1"
-                    />
-                  </View>
-                </View>
-              </Pressable>
-            </Link>
-          </>
+      <Empty
+        title="Something went wrong"
+        subTitle="We ran into a problem loading your saved profiles, sorry about that!"
+        primaryText="Try again"
+        onPrimaryPress={() => refetch()}
+      />
+    );
+  }
+
+  const renderGridItem = ({ item }: { item: any }) => {
+    return (
+      <TouchableOpacity
+        className="bg-gray-800 rounded-xl overflow-hidden"
+        style={{ width: "48%", marginBottom: 16 }}
+        onPress={() => router.push(`/likes/${item.id}`)}
+      >
+        <View className="h-36 bg-gray-700">
+          {item.profile.photos && item.profile.photos.length > 0 ? (
+            <Image
+              source={{ uri: item.profile.photos[0].photo_url }}
+              style={{ width: "100%", height: "100%" }}
+            />
+          ) : (
+            <View className="w-full h-full items-center justify-center">
+              <Ionicons
+                name={
+                  item.profile.user_role === "startup" ? "business" : "person"
+                }
+                size={40}
+                color="#ecac6d"
+              />
+            </View>
+          )}
+        </View>
+        <View className="p-3">
+          <Text className="text-white font-poppins-medium">
+            {item.profile.first_name} {item.profile.last_name}
+          </Text>
+          <View className="flex-row items-center mt-1">
+            <Ionicons
+              name={
+                item.profile.user_role === "startup" ? "business" : "briefcase"
+              }
+              size={12}
+              color="#8E8E93"
+              style={{ marginRight: 4 }}
+            />
+            <Text className="text-gray-400 text-xs">
+              {item.profile.user_role === "startup"
+                ? item.profile.funding_stage || "Startup"
+                : item.profile.skills && item.profile.skills.length > 0
+                  ? item.profile.skills[0]
+                  : "Candidate"}
+            </Text>
+          </View>
+        </View>
+        {item.compatibility_score && (
+          <View
+            className="absolute top-2 right-2 bg-gray-900 rounded-full px-2 py-1 flex-row items-center"
+            style={{ opacity: 0.9 }}
+          >
+            <Ionicons
+              name="star"
+              size={12}
+              color="#ecac6d"
+              style={{ marginRight: 2 }}
+            />
+            <Text className="text-white text-xs font-poppins-medium">
+              {item.compatibility_score.toFixed(1)}
+            </Text>
+          </View>
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
-  const renderEmpty = () => {
-    if (data.length === 1) {
-      return null;
-    }
-
-    if (isFetching) {
-      return <Loader />;
-    }
-
-    if (isError) {
-      return (
-        <Empty
-          title="Something went wrong"
-          subTitle=" We ran into a problem loading your likes, sorry about that!"
-          primaryText="Try again"
-          onPrimaryPress={() => refetch()}
-        />
-      );
-    }
-
+  const renderListItem = ({ item }: { item: any }) => {
     return (
-      <Empty
-        title="No likes yet"
-        subTitle="We can help you get your first one sooner."
-      />
+      <TouchableOpacity
+        className="bg-gray-800 rounded-xl overflow-hidden mb-4 flex-row"
+        onPress={() => router.push(`/likes/${item.id}`)}
+      >
+        <View className="h-20 w-20 bg-gray-700">
+          {item.profile.photos && item.profile.photos.length > 0 ? (
+            <Image
+              source={{ uri: item.profile.photos[0].photo_url }}
+              style={{ width: "100%", height: "100%" }}
+            />
+          ) : (
+            <View className="w-full h-full items-center justify-center">
+              <Ionicons
+                name={
+                  item.profile.user_role === "startup" ? "business" : "person"
+                }
+                size={28}
+                color="#ecac6d"
+              />
+            </View>
+          )}
+        </View>
+        <View className="flex-1 p-3 justify-center">
+          <Text className="text-white font-poppins-medium">
+            {item.profile.first_name} {item.profile.last_name}
+          </Text>
+          <View className="flex-row items-center mt-1">
+            <Ionicons
+              name={
+                item.profile.user_role === "startup" ? "business" : "briefcase"
+              }
+              size={12}
+              color="#8E8E93"
+              style={{ marginRight: 4 }}
+            />
+            <Text className="text-gray-400 text-xs" numberOfLines={1}>
+              {item.profile.user_role === "startup"
+                ? item.profile.funding_stage || "Startup"
+                : item.profile.skills && item.profile.skills.length > 0
+                  ? item.profile.skills.slice(0, 2).join(", ")
+                  : "Candidate"}
+            </Text>
+          </View>
+        </View>
+        {item.compatibility_score && (
+          <View className="px-3 justify-center">
+            <View className="bg-gray-900 rounded-full px-2 py-1 flex-row items-center">
+              <Ionicons
+                name="star"
+                size={12}
+                color="#ecac6d"
+                style={{ marginRight: 2 }}
+              />
+              <Text className="text-white text-xs font-poppins-medium">
+                {item.compatibility_score.toFixed(1)}
+              </Text>
+            </View>
+          </View>
+        )}
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View className="flex-1 bg-gray-900">
-      <FlatList
-        data={data.length > 1 ? data.slice(1) : []}
-        renderItem={({ item, index }) => {
-          return (
-            <>
-              <LikeCard like={item} />
-              {data.length % 2 === 0 && index === data.length - 2 && (
-                <View className="flex-1" />
-              )}
-            </>
-          );
-        }}
-        numColumns={2}
-        contentContainerClassName="gap-4 px-5 pb-20 grow justify-content"
-        columnWrapperClassName="gap-4"
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmpty}
-      />
-    </View>
+    <SafeAreaView className="flex-1 bg-gray-900">
+      <View className="px-4 pt-2 pb-4">
+        <View className="flex-row justify-between items-center">
+          <Text
+            className="text-3xl font-playfair-semibold"
+            style={{ color: "#ecac6d" }}
+          >
+            {savedLabel}
+          </Text>
+          <View className="flex-row bg-gray-800 rounded-full p-1">
+            <TouchableOpacity
+              className={`px-3 py-1 rounded-full ${viewMode === "grid" ? "bg-gray-700" : ""}`}
+              onPress={() => setViewMode("grid")}
+            >
+              <Ionicons name="grid" size={18} color="#ecac6d" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`px-3 py-1 rounded-full ${viewMode === "list" ? "bg-gray-700" : ""}`}
+              onPress={() => setViewMode("list")}
+            >
+              <Ionicons name="list" size={18} color="#ecac6d" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
+      {data.length === 0 ? (
+        <Empty
+          title={`No saved ${isStartup ? "candidates" : "startups"} yet`}
+          subTitle={`When you find ${isStartup ? "candidates" : "startups"} you're interested in, save them here to view later.`}
+        />
+      ) : viewMode === "grid" ? (
+        <FlatList
+          data={data}
+          renderItem={renderGridItem}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={renderListItem}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
+    </SafeAreaView>
   );
 }

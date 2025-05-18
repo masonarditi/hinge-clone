@@ -1,4 +1,5 @@
 // app/_layout.tsx
+import { DebugTouchHandler } from "@/components/debug-touch";
 import { fonts } from "@/constants/fonts";
 import { platformServices } from "@/lib/sendbird";
 import { AuthProvider } from "@/store/auth";
@@ -45,38 +46,40 @@ export default function Layout() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#1f2937" }}>
-      <StatusBar style="light" translucent={true} />
-      <SafeAreaView edges={["top"]} className="flex-1 bg-gray-900">
-        <SendbirdUIKitContainer
-          appId={process.env.EXPO_PUBLIC_SENDBIRD_APP_ID!}
-          chatOptions={{ localCacheStorage: AsyncStorage }}
-          platformServices={platformServices}
-        >
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                }}
-              >
-                <Stack.Screen
-                  name="(app)"
-                  options={{
-                    animation: "none",
+    <DebugTouchHandler>
+      <View style={{ flex: 1, backgroundColor: "#1f2937" }}>
+        <StatusBar style="light" translucent={true} />
+        <SafeAreaView edges={["top"]} className="flex-1 bg-gray-900">
+          <SendbirdUIKitContainer
+            appId={process.env.EXPO_PUBLIC_SENDBIRD_APP_ID!}
+            chatOptions={{ localCacheStorage: AsyncStorage }}
+            platformServices={platformServices}
+          >
+            <QueryClientProvider client={queryClient}>
+              <AuthProvider>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
                   }}
-                />
-                <Stack.Screen
-                  name="(auth)"
-                  options={{
-                    animation: "none",
-                  }}
-                />
-              </Stack>
-            </AuthProvider>
-          </QueryClientProvider>
-        </SendbirdUIKitContainer>
-      </SafeAreaView>
-    </View>
+                >
+                  <Stack.Screen
+                    name="(app)"
+                    options={{
+                      animation: "none",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{
+                      animation: "none",
+                    }}
+                  />
+                </Stack>
+              </AuthProvider>
+            </QueryClientProvider>
+          </SendbirdUIKitContainer>
+        </SafeAreaView>
+      </View>
+    </DebugTouchHandler>
   );
 }

@@ -451,6 +451,11 @@ export type Database = {
           user_id: string | null;
           user_role: string;
           zodiac_sign_id: number | null;
+          funding_stage: string | null;
+          looking_for_roles: string[] | null;
+          offer_details: unknown | null;
+          why_us_platform: string | null;
+          skills: string[] | null;
         };
         Insert: {
           children_id?: number | null;
@@ -476,6 +481,11 @@ export type Database = {
           user_id?: string | null;
           user_role?: string;
           zodiac_sign_id?: number | null;
+          funding_stage?: string | null;
+          looking_for_roles?: string[] | null;
+          offer_details?: unknown | null;
+          why_us_platform?: string | null;
+          skills?: string[] | null;
         };
         Update: {
           children_id?: number | null;
@@ -501,6 +511,11 @@ export type Database = {
           user_id?: string | null;
           user_role?: string;
           zodiac_sign_id?: number | null;
+          funding_stage?: string | null;
+          looking_for_roles?: string[] | null;
+          offer_details?: unknown | null;
+          why_us_platform?: string | null;
+          skills?: string[] | null;
         };
         Relationships: [
           {
@@ -740,6 +755,11 @@ export type Database = {
           answers?: Json;
           user_role?: string;
           photos?: Json;
+          looking_for_roles?: string[];
+          funding_stage?: string;
+          offer_details?: Json;
+          why_us_platform?: string;
+          skills?: string[];
         };
         Returns: undefined;
       };

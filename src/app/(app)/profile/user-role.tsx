@@ -8,22 +8,26 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
+type UserRole = "startup" | "candidate";
+
 export default function UserTypeScreen() {
   const { session } = useAuth();
   const { edits, setEdits } = useEdit();
   const { data: options } = useUserTypes();
-  const [selected, setSelected] = useState<string>(edits?.user_role || "User");
+  const [selected, setSelected] = useState<UserRole>(
+    (edits?.user_role as UserRole) || "candidate"
+  );
 
   useEffect(() => {
-    if (edits?.user_role) setSelected(edits.user_role);
+    if (edits?.user_role) setSelected(edits.user_role as UserRole);
   }, [edits]);
 
   const save = async () => {
     if (!session) return;
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("profiles")
-        .update({ user_role: selected } as any)
+        .update({ user_role: selected })
         .eq("user_id", session.user.id);
 
       if (error) {
@@ -49,7 +53,7 @@ export default function UserTypeScreen() {
       {options.map((opt) => (
         <Pressable
           key={opt.id}
-          onPress={() => setSelected(opt.name)}
+          onPress={() => setSelected(opt.name as UserRole)}
           className={`py-3 px-4 rounded mb-2 ${
             selected === opt.name ? "bg-fuchsia-700" : "bg-gray-800"
           }`}
