@@ -46,3 +46,23 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     },
   },
 });
+
+// Add this at the bottom of the file
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log(
+    "Auth state changed:",
+    event,
+    session ? "Session exists" : "No session"
+  );
+});
+
+// Test connection
+supabase
+  .from("profiles")
+  .select("count")
+  .then(({ data, error }) => {
+    console.log(
+      "Supabase connection test:",
+      error ? `Error: ${error.message}` : "Connected"
+    );
+  });

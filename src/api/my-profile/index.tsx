@@ -7,11 +7,18 @@ export const useMyProfile = () => {
   return useQuery<PrivateProfile | null>({
     queryKey: ["myProfile"],
     queryFn: async () => {
+      console.log("Fetching profile from Supabase...");
       let { data, error } = await supabase
         .rpc("get_profile")
         .returns<PrivateProfile>()
         .single();
-      if (error) throw error;
+
+      if (error) {
+        console.error("Profile fetch error:", error);
+        throw error;
+      }
+
+      console.log("Profile data received:", data ? "Success" : "Empty");
       return data;
     },
     initialData: null,

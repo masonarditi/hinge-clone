@@ -15,7 +15,9 @@ import { Redirect } from "expo-router";
 import { ActivityIndicator, Text, View } from "react-native";
 
 export default function Page() {
-  const { isPending, isError } = useMyProfile();
+  const { isPending, isError, error } = useMyProfile();
+
+  console.log("App index loading state:", { isPending, isError, error });
 
   usePrompts();
   useChildren();
