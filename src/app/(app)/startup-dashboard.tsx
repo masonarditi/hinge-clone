@@ -12,12 +12,16 @@ export default function StartupDashboard() {
     "DevOps",
   ];
 
+  const handleClose = () => {
+    router.push("/(app)/(tabs)");
+  };
+
   return (
     <View className="flex-1" style={{ backgroundColor: "#111827" }}>
       <ScrollView className="flex-1">
         <View className="p-6 relative">
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={handleClose}
             className="absolute right-6 top-0 z-10"
           >
             <Text className="text-2xl" style={{ color: "#ecac6d" }}>
