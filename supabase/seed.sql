@@ -505,13 +505,3 @@ SET
     ELSE NULL
   END
 WHERE user_role IN ('startup', 'candidate');
-
--- Update candidate profiles with skills data
-UPDATE profiles
-SET skills = CASE
-  WHEN user_role = 'candidate' THEN 
-    (ARRAY['JavaScript', 'React', 'Node.js', 'Python', 'TypeScript'])[1:floor(random() * 5) + 1]
-  ELSE 
-    NULL
-  END
-WHERE user_role = 'candidate';
