@@ -515,3 +515,64 @@ SET skills = CASE
     NULL
   END
 WHERE user_role = 'candidate';
+
+-- Update candidate profiles with projects data
+UPDATE profiles
+SET projects = 
+  jsonb_build_array(
+    jsonb_build_object(
+      'id', gen_random_uuid(),
+      'title', 'E-commerce Platform',
+      'description', 'Built a full-stack e-commerce platform with React, Next.js, and PostgreSQL. Implemented user authentication, product management, and payment processing.',
+      'project_order', 0,
+      'media', jsonb_build_array(
+        jsonb_build_object(
+          'id', gen_random_uuid(),
+          'media_type', 'image',
+          'url', 'https://images.unsplash.com/photo-1523726491678-bf852e717f6a?q=80&w=1000',
+          'media_order', 0
+        ),
+        jsonb_build_object(
+          'id', gen_random_uuid(),
+          'media_type', 'url',
+          'url', 'https://github.com/example/ecommerce',
+          'media_order', 1
+        )
+      )
+    ),
+    jsonb_build_object(
+      'id', gen_random_uuid(),
+      'title', 'Mobile App Development',
+      'description', 'Created a cross-platform mobile app using React Native with Firebase integration. Features include real-time chat, user profiles, and geo-location services.',
+      'project_order', 1,
+      'media', jsonb_build_array(
+        jsonb_build_object(
+          'id', gen_random_uuid(),
+          'media_type', 'image',
+          'url', 'https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000',
+          'media_order', 0
+        )
+      )
+    ),
+    jsonb_build_object(
+      'id', gen_random_uuid(),
+      'title', 'AI Recommendation Engine',
+      'description', 'Developed a machine learning recommendation system that analyzes user behavior to provide personalized content suggestions, increasing engagement by 45%.',
+      'project_order', 2,
+      'media', jsonb_build_array(
+        jsonb_build_object(
+          'id', gen_random_uuid(),
+          'media_type', 'image',
+          'url', 'https://images.unsplash.com/photo-1591696205602-2f950c417cb9?q=80&w=1000',
+          'media_order', 0
+        ),
+        jsonb_build_object(
+          'id', gen_random_uuid(),
+          'media_type', 'demo_link',
+          'url', 'https://demo.example.com/ai-recommendation',
+          'media_order', 1
+        )
+      )
+    )
+  )
+WHERE user_role = 'candidate' AND (projects IS NULL OR jsonb_array_length(projects) = 0);
