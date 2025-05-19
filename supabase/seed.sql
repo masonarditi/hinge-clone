@@ -515,3 +515,27 @@ SET skills = CASE
     NULL
   END
 WHERE user_role = 'candidate';
+
+-- Add to seed.sql
+-- Update candidate profiles with projects data
+UPDATE profiles
+SET projects = CASE
+  WHEN user_role = 'candidate' THEN 
+    ARRAY[
+      jsonb_build_object(
+        'title', (ARRAY['Personal Portfolio', 'E-commerce Platform', 'Mobile App', 'Data Visualization Tool', 'Social Network'])[floor(random() * 5) + 1],
+        'description', (ARRAY['Built from scratch using React and Node.js', 'Developed RESTful API and frontend', 'Created responsive design with modern UI', 'Implemented complex algorithms for analysis', 'Built scalable architecture for high traffic'])[floor(random() * 5) + 1],
+        'url', (ARRAY['https://github.com/user/project1', 'https://project-demo.com', 'https://github.com/user/project2', null])[floor(random() * 4) + 1],
+        'media', ARRAY[(ARRAY['https://project-image1.com', 'https://project-image2.com', null])[floor(random() * 3) + 1]]
+      ),
+      jsonb_build_object(
+        'title', (ARRAY['Machine Learning Model', 'API Gateway', 'Game Development', 'Productivity Tool', 'Content Management System'])[floor(random() * 5) + 1],
+        'description', (ARRAY['Trained models on large datasets', 'Designed microservice architecture', 'Developed using Unity and C#', 'Created browser extension', 'Built custom CMS with admin dashboard'])[floor(random() * 5) + 1],
+        'url', (ARRAY['https://github.com/user/project3', 'https://demo-project.com', 'https://github.com/user/project4', null])[floor(random() * 4) + 1],
+        'media', ARRAY[(ARRAY['https://project-image3.com', 'https://project-image4.com', null])[floor(random() * 3) + 1]]
+      )
+    ]
+  ELSE 
+    NULL
+  END
+WHERE user_role = 'candidate';
